@@ -1,0 +1,6 @@
+deployment:
+  imageURL: joindevops/catalogue
+  imageVersion:  IAMGE_VERSION # WE DON'T KNOW WHAT IS THE VERISON, IT WILL BE REPLACE DYNAMICALLY WHEN WORKING WITH CI JOBS
+hpa:
+  maxReplicas: 10
+  utilisation: 75
