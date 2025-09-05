@@ -31,7 +31,7 @@ pipeline{
                 script{
                     withAWS(credentials: 'aws-auth', region: 'us-east-1'){
                         sh """
-                            aws eks update-kubeconfig --region $REGION --name "$PROJECT -${params.deploy_to}"
+                            aws eks update-kubeconfig --region $REGION --name "$PROJECT-${params.deploy_to}"
 
                             kubectl get nodes
                             kubectl apply -f 01-namespace.yaml
