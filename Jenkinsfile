@@ -37,9 +37,7 @@ pipeline{
 
                             kubectl apply -f 01-namespace.yml
 
-                            // sed -i "s/IMAGE_VERSION/${params.appVersion}/g" values-${params.deploy_to}.yaml
-
-                            // helm upgrade --install $COMPONENT -f values-${params.deploy_to}.yaml -n $PROJECT .
+                           
 
                         """
                     }
@@ -52,3 +50,7 @@ pipeline{
 // helm need to pass values
 // create namespce safely 
 // namesapce will not create through pipline, but for practice we do here
+
+//  sed -i "s/IMAGE_VERSION/${params.appVersion}/g" values-${params.deploy_to}.yaml
+                            
+//                             helm upgrade --install $COMPONENT -f values-${params.deploy_to}.yaml -n $PROJECT .
