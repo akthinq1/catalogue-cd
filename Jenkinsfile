@@ -60,6 +60,9 @@ pipeline{
         stage('Deploy'){
             steps{
                 script{
+
+                    echo "Package version: ${params.appVersion}"
+                    
                     withAWS(credentials: 'aws-auth', region: 'us-east-1'){
                         sh """
                             aws eks update-kubeconfig --region $REGION --name "$PROJECT-${params.deploy_to}"
