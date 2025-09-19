@@ -27,6 +27,57 @@ pipeline{
 
     stages{
 
+        // stage('Check Status'){
+        //     steps{
+        //         script{
+        //             withAWS(credentials: 'aws-auth', region: 'us-east-1') {
+
+        //                 //get rollback status in a variable and use it later
+        //                 def deploymentStatus = sh(returnStdout: true, script: "kubectl rollout status deployment/catalogue --timeout=30s -n $PROJECT || echo FAILED").trim()
+
+        //                 if (deploymentStatus.contains("successfully rolled out")) {
+        //                     echo "Deployment is success"
+        //                 } else {
+        //                     sh """
+        //                         helm rollback $COMPONENT -n $PROJECT
+        //                         sleep 20
+        //                     """
+        //                     def rollbackStatus = sh(returnStdout: true, script: "kubectl rollout status deployment/catalogue --timeout=30s -n $PROJECT || echo FAILED").trim()
+
+        //                     if (rollbackStatus.contains("successfully rolled out")) {
+        //                         error "Deployment is Failure, Rollback Success"
+        //                     }
+        //                     else{
+        //                         error "Deployment is Failure, Rollback Failure. Application is not running"
+        //                     }
+        //                 }
+
+        //             }
+        //         }
+        //     }
+        // }
+
+        stage('Deploy'){
+            steps{
+                script{
+                    withAWS(credentials: 'aws-auth', region: 'us-east-1'){
+                        sh """
+                            aws eks update-kubeconfig --region $REGION --name "$PROJECT-${params.deploy_to}"
+
+                            kubectl get nodes
+
+                            kubectl apply -f 01-namespace.yml
+
+                           sed -i "s/IMAGE_VERSION/${params.appVersion}/g" values-${params.deploy_to}.yaml
+
+                           helm upgrade --install $COMPONENT -f values-${params.deploy_to}.yaml -n $PROJECT .
+
+                        """
+                    }
+                }
+            }
+        }
+
         stage('Check Status'){
             steps{
                 script{
@@ -52,27 +103,6 @@ pipeline{
                             }
                         }
 
-                    }
-                }
-            }
-        }
-
-        stage('Deploy'){
-            steps{
-                script{
-                    withAWS(credentials: 'aws-auth', region: 'us-east-1'){
-                        sh """
-                            aws eks update-kubeconfig --region $REGION --name "$PROJECT-${params.deploy_to}"
-
-                            kubectl get nodes
-
-                            kubectl apply -f 01-namespace.yml
-
-                           sed -i "s/IMAGE_VERSION/${params.appVersion}/g" values-${params.deploy_to}.yaml
-
-                           helm upgrade --install $COMPONENT -f values-${params.deploy_to}.yaml -n $PROJECT .
-
-                        """
                     }
                 }
             }
