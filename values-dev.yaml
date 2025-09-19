@@ -1,5 +1,5 @@
 deployment:
-  imageURL: joindevops/catalogue // from docker hub
+  imageURL: joindevops/catalogue #// from docker hub
   # imageURL: 741005748171.dkr.ecr.us-east-1.amazonaws.com/roboshop/catalogue
   imageVersion:  IAMGE_VERSION # WE DON'T KNOW WHAT IS THE VERISON, IT WILL BE REPLACE DYNAMICALLY WHEN WORKING WITH CI JOBS
 hpa:
