@@ -30,8 +30,11 @@ pipeline{
         stage('Check Status'){
             steps{
                 script{
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
+                    withAWS(credentials: 'aws-auth', region: 'us-east-1') {
+
+                        //get rollback status in a variable and use it later
                         def deploymentStatus = sh(returnStdout: true, script: "kubectl rollout status deployment/catalogue --timeout=30s -n $PROJECT || echo FAILED").trim()
+
                         if (deploymentStatus.contains("successfully rolled out")) {
                             echo "Deployment is success"
                         } else {
@@ -40,6 +43,7 @@ pipeline{
                                 sleep 20
                             """
                             def rollbackStatus = sh(returnStdout: true, script: "kubectl rollout status deployment/catalogue --timeout=30s -n $PROJECT || echo FAILED").trim()
+
                             if (rollbackStatus.contains("successfully rolled out")) {
                                 error "Deployment is Failure, Rollback Success"
                             }
